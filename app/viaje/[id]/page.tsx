@@ -289,6 +289,14 @@ export default function TripDetailPage() {
   const params = useParams()
   const [isSaved, setIsSaved] = useState(false)
   const [isRequesting, setIsRequesting] = useState(false)
+  const [expandedMaps, setExpandedMaps] = useState<Record<string, boolean>>({})
+
+  const toggleMap = (stepId: string) => {
+    setExpandedMaps(prev => ({
+      ...prev,
+      [stepId]: !prev[stepId]
+    }))
+  }
 
   // In a real app, fetch trip data based on params.id
   const trip = mockTrip
@@ -581,9 +589,35 @@ export default function TripDetailPage() {
                                     </p>
                                   )}
                                   {step.location && (
-                                    <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-                                      <Navigation className="h-3 w-3 text-primary" />
-                                      <span>{step.location.address}</span>
+                                    <div className="mt-2">
+                                      <button
+                                        onClick={() => toggleMap(step.id)}
+                                        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors group"
+                                      >
+                                        <Navigation className="h-3 w-3 text-primary" />
+                                        <span>{step.location.address}</span>
+                                        <ChevronDown 
+                                          className={cn(
+                                            "h-3 w-3 text-muted-foreground transition-transform duration-200",
+                                            expandedMaps[step.id] && "rotate-180"
+                                          )} 
+                                        />
+                                        <span className="text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                                          {expandedMaps[step.id] ? "Ocultar mapa" : "Ver mapa"}
+                                        </span>
+                                      </button>
+                                      {expandedMaps[step.id] && step.location.lat && step.location.lng && (
+                                        <div className="mt-2 rounded-lg overflow-hidden border border-border">
+                                          <div className="relative h-32 w-full bg-muted">
+                                            <Image
+                                              src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s+ef4444(${step.location.lng},${step.location.lat})/${step.location.lng},${step.location.lat},14,0/400x150@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw`}
+                                              alt={`Mapa de ${step.title}`}
+                                              fill
+                                              className="object-cover"
+                                            />
+                                          </div>
+                                        </div>
+                                      )}
                                     </div>
                                   )}
                                 </div>
