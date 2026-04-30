@@ -1,4 +1,4 @@
-import { MapPin, Calendar, Clock, Users, Star, Trophy, Euro, Car, Bus, Building2 } from "lucide-react"
+import { MapPin, Calendar, Clock, Users, Star, Trophy, Euro, Car, Bus } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
@@ -26,9 +26,6 @@ interface RideCardProps {
   driverAvatar?: string
   isTopDriver?: boolean
   vehicleType?: VehicleType
-  stadiumName?: string
-  stadiumImage?: string
-  stadiumCity?: string
 }
 
 export function RideCard({
@@ -48,9 +45,6 @@ export function RideCard({
   driverAvatar,
   isTopDriver,
   vehicleType = "car",
-  stadiumName,
-  stadiumImage,
-  stadiumCity,
 }: RideCardProps) {
   const getSeatsColor = (seats: number) => {
     if (seats === 0) return "bg-seats-full text-white"
@@ -81,44 +75,14 @@ export function RideCard({
       <Card className="group overflow-hidden border-border bg-card transition-all hover:shadow-lg hover:border-primary/30">
         <CardContent className="p-0">
         <div className="flex flex-col lg:flex-row">
-          {/* Stadium Image */}
-          {stadiumImage && (
-            <div className="relative h-40 w-full lg:h-auto lg:w-48 flex-shrink-0 overflow-hidden">
-              <Image
-                src={stadiumImage}
-                alt={stadiumName || "Estadio"}
-                fill
-                className="object-cover transition-transform group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-              <div className="absolute bottom-3 left-3 right-3">
-                <div className="flex items-center gap-1.5 text-white">
-                  <Building2 className="h-4 w-4" />
-                  <span className="text-sm font-medium truncate">{stadiumName}</span>
-                </div>
-                {stadiumCity && (
-                  <p className="text-xs text-white/80 mt-0.5">{stadiumCity}</p>
-                )}
-              </div>
-            </div>
-          )}
-          
           {/* Match Info */}
           <div className="flex-1 p-5">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
-                {/* Competition Badge & Stadium Name (when no image) */}
-                <div className="flex flex-wrap items-center gap-2 mb-3">
-                  <Badge variant="secondary" className="text-xs font-medium">
-                    {competition}
-                  </Badge>
-                  {stadiumName && !stadiumImage && (
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Building2 className="h-3.5 w-3.5" />
-                      <span>{stadiumName}</span>
-                    </div>
-                  )}
-                </div>
+                {/* Competition Badge */}
+                <Badge variant="secondary" className="mb-3 text-xs font-medium">
+                  {competition}
+                </Badge>
                 
                 {/* Match with Team Crests */}
                 <div className="flex items-center gap-3">
