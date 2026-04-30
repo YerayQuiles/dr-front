@@ -249,77 +249,84 @@ export default function TripDetailPage() {
             </Badge>
           </div>
 
-          {/* Match Info Card with Stadium Image */}
-          <Card className="mb-6 overflow-hidden">
-            {/* Stadium Image Header */}
-            <div className="relative h-48 w-full">
-              <Image
-                src={trip.stadiumImage}
-                alt={trip.stadiumName}
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4">
-                <div className="flex items-center gap-2 text-white">
-                  <Building2 className="h-5 w-5" />
-                  <span className="text-lg font-semibold">{trip.stadiumName}</span>
-                </div>
-                <p className="text-sm text-white/80 mt-1">{trip.stadiumCity}</p>
-              </div>
-              <Badge variant="secondary" className="absolute top-4 left-4 text-xs font-medium">
-                {trip.competition}
-              </Badge>
-            </div>
+          {/* Match Info Card with Full Stadium Background */}
+          <Card className="mb-6 overflow-hidden relative min-h-[320px]">
+            {/* Full Background Stadium Image with Blur */}
+            <Image
+              src={trip.stadiumImage}
+              alt={trip.stadiumName}
+              fill
+              className="object-cover blur-[3px] scale-105"
+            />
+            {/* Dark gradient overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
             
-            <CardContent className="p-6">
-              {/* Teams */}
-              <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-8">
-                {/* Home Team */}
-                <div className="flex flex-col items-center gap-2">
-                  {trip.homeTeamCrest && (
-                    <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-border bg-white shadow-sm">
-                      <Image
-                        src={trip.homeTeamCrest}
-                        alt={trip.homeTeam}
-                        fill
-                        className="object-contain p-1"
-                      />
-                    </div>
-                  )}
-                  <span className="text-lg font-bold text-card-foreground">{trip.homeTeam}</span>
+            {/* Content overlay */}
+            <div className="relative z-10 p-6 flex flex-col h-full min-h-[320px]">
+              {/* Top: Competition Badge & Stadium Info */}
+              <div className="flex items-start justify-between mb-6">
+                <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm text-xs font-semibold">
+                  {trip.competition}
+                </Badge>
+                <div className="flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm px-3 py-1.5">
+                  <Building2 className="h-4 w-4 text-white" />
+                  <span className="text-sm font-medium text-white">{trip.stadiumName}</span>
+                  <span className="text-white/70">•</span>
+                  <span className="text-sm text-white/80">{trip.stadiumCity}</span>
                 </div>
+              </div>
+              
+              {/* Center: Teams */}
+              <div className="flex-1 flex flex-col items-center justify-center">
+                <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-12">
+                  {/* Home Team */}
+                  <div className="flex flex-col items-center gap-3">
+                    {trip.homeTeamCrest && (
+                      <div className="relative h-20 w-20 overflow-hidden rounded-full border-3 border-white/40 bg-white shadow-xl">
+                        <Image
+                          src={trip.homeTeamCrest}
+                          alt={trip.homeTeam}
+                          fill
+                          className="object-contain p-1.5"
+                        />
+                      </div>
+                    )}
+                    <span className="text-xl font-bold text-white drop-shadow-lg">{trip.homeTeam}</span>
+                  </div>
 
-                <span className="text-2xl font-bold text-muted-foreground">vs</span>
+                  <div className="flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm px-4 py-2">
+                    <span className="text-2xl font-bold text-white">vs</span>
+                  </div>
 
-                {/* Away Team */}
-                <div className="flex flex-col items-center gap-2">
-                  {trip.awayTeamCrest && (
-                    <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-border bg-white shadow-sm">
-                      <Image
-                        src={trip.awayTeamCrest}
-                        alt={trip.awayTeam}
-                        fill
-                        className="object-contain p-1"
-                      />
-                    </div>
-                  )}
-                  <span className="text-lg font-bold text-card-foreground">{trip.awayTeam}</span>
+                  {/* Away Team */}
+                  <div className="flex flex-col items-center gap-3">
+                    {trip.awayTeamCrest && (
+                      <div className="relative h-20 w-20 overflow-hidden rounded-full border-3 border-white/40 bg-white shadow-xl">
+                        <Image
+                          src={trip.awayTeamCrest}
+                          alt={trip.awayTeam}
+                          fill
+                          className="object-contain p-1.5"
+                        />
+                      </div>
+                    )}
+                    <span className="text-xl font-bold text-white drop-shadow-lg">{trip.awayTeam}</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Match Date/Time */}
-              <div className="mt-6 flex items-center justify-center gap-4 text-muted-foreground">
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="h-4 w-4 text-primary" />
-                  <span>{trip.matchDate}</span>
+              {/* Bottom: Match Date/Time */}
+              <div className="mt-6 flex items-center justify-center gap-4">
+                <div className="flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm px-4 py-2">
+                  <Calendar className="h-4 w-4 text-white" />
+                  <span className="text-white font-medium">{trip.matchDate}</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-primary" />
-                  <span>{trip.matchTime}</span>
+                <div className="flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm px-4 py-2">
+                  <Clock className="h-4 w-4 text-white" />
+                  <span className="text-white font-medium">{trip.matchTime}</span>
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
 
           <div className="grid gap-6 lg:grid-cols-3">
