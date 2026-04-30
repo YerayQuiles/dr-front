@@ -466,30 +466,6 @@ export default function TripDetailPage() {
                         </DialogDescription>
                       </DialogHeader>
                       
-                      {/* Mini Map */}
-                      {trip.departureLocation && trip.stadiumLocation && (
-                        <div className="mt-4 rounded-lg overflow-hidden border border-border">
-                          <div className="relative h-40 w-full bg-muted">
-                            <Image
-                              src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s-a+22c55e(${trip.departureLocation.lng},${trip.departureLocation.lat}),pin-s-b+ef4444(${trip.stadiumLocation.lng},${trip.stadiumLocation.lat})/auto/600x200@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw&padding=50`}
-                              alt="Mapa del recorrido"
-                              fill
-                              className="object-cover"
-                            />
-                            <div className="absolute bottom-2 left-2 flex gap-2">
-                              <div className="flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-xs font-medium shadow-sm">
-                                <div className="h-2 w-2 rounded-full bg-seats-available" />
-                                <span>Origen</span>
-                              </div>
-                              <div className="flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-xs font-medium shadow-sm">
-                                <div className="h-2 w-2 rounded-full bg-seats-full" />
-                                <span>Destino</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      
                       <div className="mt-4">
                         {/* Enhanced Timeline */}
                         <div className="relative space-y-0">
