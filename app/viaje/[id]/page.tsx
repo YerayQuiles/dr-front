@@ -17,13 +17,42 @@ import {
   Phone,
   ArrowLeft,
   Settings,
+  Building2,
+  Route,
+  CircleDot,
+  Flag,
+  Home,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  Info,
+  Megaphone,
+  ChevronDown,
+  Utensils,
+  Camera,
+  Coffee,
+  Fuel,
+  Navigation,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Header } from "@/components/header"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 
@@ -35,6 +64,40 @@ interface Passenger {
   name: string
   avatar?: string
   status: "confirmed" | "pending"
+}
+
+type ItineraryStepType = 
+  | "departure" 
+  | "meeting" 
+  | "stadium_arrival" 
+  | "match" 
+  | "return" 
+  | "arrival"
+  | "meal"
+  | "visit"
+  | "rest_stop"
+  | "custom"
+
+interface ItineraryStep {
+  id: string
+  time?: string
+  title: string
+  description?: string
+  type: ItineraryStepType
+  location?: {
+    address: string
+    lat?: number
+    lng?: number
+  }
+  isFixed?: boolean
+}
+
+interface TripInformation {
+  includes?: string[]
+  notIncluded?: string[]
+  importantNote?: string
+  additionalInfo?: string
+  organizerRules?: string
 }
 
 interface TripDetails {
@@ -66,6 +129,13 @@ interface TripDetails {
   passengers: Passenger[]
   isCurrentUserDriver: boolean
   isCurrentUserPassenger: boolean
+  stadiumName: string
+  stadiumImage: string
+  stadiumCity: string
+  stadiumLocation?: { lat: number; lng: number }
+  departureLocation?: { lat: number; lng: number }
+  itinerary: ItineraryStep[]
+  tripInfo?: TripInformation
 }
 
 const teamCrests: Record<string, string> = {
@@ -106,6 +176,113 @@ const mockTrip: TripDetails = {
   ],
   isCurrentUserDriver: false,
   isCurrentUserPassenger: true,
+  stadiumName: "Santiago Bernabeu",
+  stadiumImage: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=80",
+  stadiumCity: "Madrid",
+  stadiumLocation: { lat: 40.453054, lng: -3.688344 },
+  departureLocation: { lat: 39.469907, lng: -0.376288 },
+  itinerary: [
+    {
+      id: "1",
+      time: "13:30",
+      title: "Punto de encuentro",
+      description: "Plaza del Ayuntamiento, 1 - Valencia",
+      type: "meeting",
+      isFixed: true,
+      location: {
+        address: "Plaza del Ayuntamiento, 1 - Valencia",
+        lat: 39.469907,
+        lng: -0.376288,
+      },
+    },
+    {
+      id: "2",
+      time: "14:00",
+      title: "Salida",
+      description: "Inicio del viaje hacia Madrid",
+      type: "departure",
+      isFixed: true,
+    },
+    {
+      id: "3",
+      time: "15:30",
+      title: "Parada para comer",
+      description: "Área de servicio Motilla del Palancar",
+      type: "meal",
+      isFixed: false,
+      location: {
+        address: "Área de servicio A-3, Motilla del Palancar",
+        lat: 39.5625,
+        lng: -1.8939,
+      },
+    },
+    {
+      id: "4",
+      time: "18:00",
+      title: "Llegada al estadio",
+      description: "Llegada aproximada al Santiago Bernabeu",
+      type: "stadium_arrival",
+      isFixed: true,
+      location: {
+        address: "Av. de Concha Espina, 1, Madrid",
+        lat: 40.453054,
+        lng: -3.688344,
+      },
+    },
+    {
+      id: "5",
+      time: "21:00",
+      title: "Partido",
+      description: "Real Madrid vs FC Barcelona - Santiago Bernabeu",
+      type: "match",
+      isFixed: true,
+    },
+    {
+      id: "6",
+      time: "23:15",
+      title: "Regreso",
+      description: "Salida desde el estadio hacia Valencia",
+      type: "return",
+      isFixed: true,
+    },
+    {
+      id: "7",
+      time: "01:00",
+      title: "Parada de descanso",
+      description: "Breve parada para estirar las piernas",
+      type: "rest_stop",
+      isFixed: false,
+    },
+    {
+      id: "8",
+      time: "02:45",
+      title: "Llegada a Valencia",
+      description: "Llegada estimada al punto de encuentro",
+      type: "arrival",
+      isFixed: true,
+      location: {
+        address: "Plaza del Ayuntamiento, 1 - Valencia",
+        lat: 39.469907,
+        lng: -0.376288,
+      },
+    },
+  ],
+  tripInfo: {
+    includes: [
+      "Transporte en vehículo privado ida y vuelta",
+      "Conductor experimentado",
+      "Paradas para descanso y comida",
+      "Seguro de viajeros",
+    ],
+    notIncluded: [
+      "Entrada al partido",
+      "Comidas durante el viaje",
+      "Gastos personales",
+    ],
+    importantNote: "Se ruega puntualidad en el punto de encuentro. El vehículo saldrá a la hora indicada sin excepciones.",
+    additionalInfo: "El viaje tiene una duración aproximada de 3.5 horas. Recomendamos llevar ropa cómoda y algo de comida/bebida para el trayecto. Habrá paradas programadas para descansar.",
+    organizerRules: "No se permite fumar en el vehículo. Está prohibido el consumo de alcohol durante el trayecto. El organizador se reserva el derecho de cancelar la reserva si no se cumplen estas normas.",
+  },
 }
 
 export default function TripDetailPage() {
@@ -176,69 +353,247 @@ export default function TripDetailPage() {
             </Badge>
           </div>
 
-          {/* Match Info Card */}
-          <Card className="mb-6">
-            <CardContent className="p-6">
-              <Badge variant="secondary" className="mb-4 text-xs font-medium">
-                {trip.competition}
-              </Badge>
-
-              {/* Teams */}
-              <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-8">
-                {/* Home Team */}
-                <div className="flex flex-col items-center gap-2">
-                  {trip.homeTeamCrest && (
-                    <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-border bg-white shadow-sm">
-                      <Image
-                        src={trip.homeTeamCrest}
-                        alt={trip.homeTeam}
-                        fill
-                        className="object-contain p-1"
-                      />
-                    </div>
-                  )}
-                  <span className="text-lg font-bold text-card-foreground">{trip.homeTeam}</span>
+          {/* Match Info Card with Full Stadium Background */}
+          <Card className="mb-6 overflow-hidden relative min-h-[320px]">
+            {/* Full Background Stadium Image with Blur */}
+            <Image
+              src={trip.stadiumImage}
+              alt={trip.stadiumName}
+              fill
+              className="object-cover blur-[3px] scale-105"
+            />
+            {/* Dark gradient overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+            
+            {/* Content overlay */}
+            <div className="relative z-10 p-6 flex flex-col h-full min-h-[320px]">
+              {/* Top: Competition Badge & Stadium Info */}
+              <div className="flex items-start justify-between mb-6">
+                <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm text-xs font-semibold">
+                  {trip.competition}
+                </Badge>
+                <div className="flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm px-3 py-1.5">
+                  <Building2 className="h-4 w-4 text-white" />
+                  <span className="text-sm font-medium text-white">{trip.stadiumName}</span>
+                  <span className="text-white/70">•</span>
+                  <span className="text-sm text-white/80">{trip.stadiumCity}</span>
                 </div>
+              </div>
+              
+              {/* Center: Teams */}
+              <div className="flex-1 flex flex-col items-center justify-center">
+                <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-12">
+                  {/* Home Team */}
+                  <div className="flex flex-col items-center gap-3">
+                    {trip.homeTeamCrest && (
+                      <div className="relative h-20 w-20 overflow-hidden rounded-full border-3 border-white/40 bg-white shadow-xl">
+                        <Image
+                          src={trip.homeTeamCrest}
+                          alt={trip.homeTeam}
+                          fill
+                          className="object-contain p-1.5"
+                        />
+                      </div>
+                    )}
+                    <span className="text-xl font-bold text-white drop-shadow-lg">{trip.homeTeam}</span>
+                  </div>
 
-                <span className="text-2xl font-bold text-muted-foreground">vs</span>
+                  <div className="flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm px-4 py-2">
+                    <span className="text-2xl font-bold text-white">vs</span>
+                  </div>
 
-                {/* Away Team */}
-                <div className="flex flex-col items-center gap-2">
-                  {trip.awayTeamCrest && (
-                    <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-border bg-white shadow-sm">
-                      <Image
-                        src={trip.awayTeamCrest}
-                        alt={trip.awayTeam}
-                        fill
-                        className="object-contain p-1"
-                      />
-                    </div>
-                  )}
-                  <span className="text-lg font-bold text-card-foreground">{trip.awayTeam}</span>
+                  {/* Away Team */}
+                  <div className="flex flex-col items-center gap-3">
+                    {trip.awayTeamCrest && (
+                      <div className="relative h-20 w-20 overflow-hidden rounded-full border-3 border-white/40 bg-white shadow-xl">
+                        <Image
+                          src={trip.awayTeamCrest}
+                          alt={trip.awayTeam}
+                          fill
+                          className="object-contain p-1.5"
+                        />
+                      </div>
+                    )}
+                    <span className="text-xl font-bold text-white drop-shadow-lg">{trip.awayTeam}</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Match Date/Time */}
-              <div className="mt-6 flex items-center justify-center gap-4 text-muted-foreground">
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="h-4 w-4 text-primary" />
-                  <span>{trip.matchDate}</span>
+              {/* Bottom: Match Date/Time */}
+              <div className="mt-6 flex items-center justify-center gap-4">
+                <div className="flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm px-4 py-2">
+                  <Calendar className="h-4 w-4 text-white" />
+                  <span className="text-white font-medium">{trip.matchDate}</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-primary" />
-                  <span>{trip.matchTime}</span>
+                <div className="flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm px-4 py-2">
+                  <Clock className="h-4 w-4 text-white" />
+                  <span className="text-white font-medium">{trip.matchTime}</span>
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
 
           <div className="grid gap-6 lg:grid-cols-3">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Departure Info */}
+              {/* Departure Info with Itinerary Button */}
               <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle className="text-lg">Información de salida</CardTitle>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <Route className="h-4 w-4" />
+                        Ver itinerario
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                          <Route className="h-5 w-5 text-primary" />
+                          Itinerario del viaje
+                        </DialogTitle>
+                        <DialogDescription>
+                          Cronograma detallado del viaje a {trip.stadiumName}
+                        </DialogDescription>
+                      </DialogHeader>
+                      
+                      {/* Mini Map */}
+                      {trip.departureLocation && trip.stadiumLocation && (
+                        <div className="mt-4 rounded-lg overflow-hidden border border-border">
+                          <div className="relative h-40 w-full bg-muted">
+                            <Image
+                              src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s-a+22c55e(${trip.departureLocation.lng},${trip.departureLocation.lat}),pin-s-b+ef4444(${trip.stadiumLocation.lng},${trip.stadiumLocation.lat})/auto/600x200@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw&padding=50`}
+                              alt="Mapa del recorrido"
+                              fill
+                              className="object-cover"
+                            />
+                            <div className="absolute bottom-2 left-2 flex gap-2">
+                              <div className="flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-xs font-medium shadow-sm">
+                                <div className="h-2 w-2 rounded-full bg-seats-available" />
+                                <span>Origen</span>
+                              </div>
+                              <div className="flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-xs font-medium shadow-sm">
+                                <div className="h-2 w-2 rounded-full bg-seats-full" />
+                                <span>Destino</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="mt-4">
+                        {/* Enhanced Timeline */}
+                        <div className="relative space-y-0">
+                          {trip.itinerary.map((step, index) => {
+                            const getStepIcon = (type: ItineraryStepType) => {
+                              switch (type) {
+                                case "meeting":
+                                  return <Users className="h-4 w-4" />
+                                case "departure":
+                                  return <Car className="h-4 w-4" />
+                                case "stadium_arrival":
+                                  return <Building2 className="h-4 w-4" />
+                                case "match":
+                                  return <Trophy className="h-4 w-4" />
+                                case "return":
+                                  return <ArrowLeft className="h-4 w-4" />
+                                case "arrival":
+                                  return <Flag className="h-4 w-4" />
+                                case "meal":
+                                  return <Utensils className="h-4 w-4" />
+                                case "visit":
+                                  return <Camera className="h-4 w-4" />
+                                case "rest_stop":
+                                  return <Coffee className="h-4 w-4" />
+                                case "custom":
+                                  return <CircleDot className="h-4 w-4" />
+                                default:
+                                  return <CircleDot className="h-4 w-4" />
+                              }
+                            }
+
+                            const getStepColor = (type: ItineraryStepType, isFixed?: boolean) => {
+                              if (!isFixed) {
+                                return "bg-secondary text-secondary-foreground border-2 border-dashed border-muted-foreground/30"
+                              }
+                              switch (type) {
+                                case "match":
+                                  return "bg-primary text-primary-foreground"
+                                case "departure":
+                                case "return":
+                                  return "bg-seats-available text-white"
+                                case "stadium_arrival":
+                                  return "bg-primary/80 text-white"
+                                case "arrival":
+                                  return "bg-seats-low text-foreground"
+                                default:
+                                  return "bg-secondary text-secondary-foreground"
+                              }
+                            }
+
+                            const isLast = index === trip.itinerary.length - 1
+
+                            return (
+                              <div key={step.id} className="flex gap-4">
+                                {/* Timeline line and dot */}
+                                <div className="flex flex-col items-center">
+                                  <div
+                                    className={cn(
+                                      "flex h-10 w-10 items-center justify-center rounded-full",
+                                      getStepColor(step.type, step.isFixed)
+                                    )}
+                                  >
+                                    {getStepIcon(step.type)}
+                                  </div>
+                                  {!isLast && (
+                                    <div className={cn(
+                                      "h-14 w-0.5",
+                                      step.isFixed ? "bg-border" : "bg-border/50 border-l border-dashed"
+                                    )} />
+                                  )}
+                                </div>
+                                {/* Content */}
+                                <div className="flex-1 pb-6">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    {step.time && (
+                                      <span className="text-sm font-bold text-primary">
+                                        {step.time}
+                                      </span>
+                                    )}
+                                    {!step.time && (
+                                      <span className="text-xs text-muted-foreground italic">
+                                        Hora aprox.
+                                      </span>
+                                    )}
+                                    <span className="font-semibold text-card-foreground">
+                                      {step.title}
+                                    </span>
+                                    {!step.isFixed && (
+                                      <Badge variant="outline" className="text-xs py-0 h-5">
+                                        Parada opcional
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  {step.description && (
+                                    <p className="mt-1 text-sm text-muted-foreground">
+                                      {step.description}
+                                    </p>
+                                  )}
+                                  {step.location && (
+                                    <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+                                      <Navigation className="h-3 w-3 text-primary" />
+                                      <span>{step.location.address}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-start gap-3">
@@ -257,6 +612,41 @@ export default function TripDetailPage() {
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-primary" />
                       <span className="text-sm">{trip.departureTime}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Quick Itinerary Preview */}
+                  <Separator />
+                  <div className="rounded-lg bg-secondary/50 p-4">
+                    <h4 className="flex items-center gap-2 text-sm font-medium text-card-foreground mb-3">
+                      <Route className="h-4 w-4 text-primary" />
+                      Resumen del viaje
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Car className="h-4 w-4 text-seats-available" />
+                        <span className="text-muted-foreground">Salida:</span>
+                        <span className="font-medium">{trip.departureTime}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Trophy className="h-4 w-4 text-primary" />
+                        <span className="text-muted-foreground">Partido:</span>
+                        <span className="font-medium">{trip.matchTime}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <ArrowLeft className="h-4 w-4 text-seats-available" />
+                        <span className="text-muted-foreground">Regreso:</span>
+                        <span className="font-medium">
+                          {trip.itinerary.find(s => s.type === "return")?.time || "Por confirmar"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Home className="h-4 w-4 text-seats-low" />
+                        <span className="text-muted-foreground">Llegada:</span>
+                        <span className="font-medium">
+                          {trip.itinerary[trip.itinerary.length - 1]?.time || "Por confirmar"}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -283,7 +673,102 @@ export default function TripDetailPage() {
                   </div>
                 </CardContent>
               </Card>
+              
+              {/* Trip Information Section (only shown if organizer fills it in) */}
+              {trip.tripInfo && (
+                <Card>
+                  <Collapsible defaultOpen>
+                    <CardHeader className="pb-3">
+                      <CollapsibleTrigger className="flex w-full items-center justify-between">
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          <Info className="h-5 w-5 text-primary" />
+                          Información del viaje
+                        </CardTitle>
+                        <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform duration-200 [&[data-state=open]]:rotate-180" />
+                      </CollapsibleTrigger>
+                    </CardHeader>
+                    <CollapsibleContent>
+                      <CardContent className="space-y-5 pt-0">
+                        {/* Includes */}
+                        {trip.tripInfo.includes && trip.tripInfo.includes.length > 0 && (
+                          <div>
+                            <h4 className="flex items-center gap-2 text-sm font-semibold text-card-foreground mb-2">
+                              <CheckCircle2 className="h-4 w-4 text-seats-available" />
+                              Incluye
+                            </h4>
+                            <ul className="space-y-1.5">
+                              {trip.tripInfo.includes.map((item, index) => (
+                                <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                  <CheckCircle2 className="h-4 w-4 text-seats-available mt-0.5 flex-shrink-0" />
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
 
+                        {/* Not Included */}
+                        {trip.tripInfo.notIncluded && trip.tripInfo.notIncluded.length > 0 && (
+                          <div>
+                            <h4 className="flex items-center gap-2 text-sm font-semibold text-card-foreground mb-2">
+                              <XCircle className="h-4 w-4 text-seats-full" />
+                              No incluye
+                            </h4>
+                            <ul className="space-y-1.5">
+                              {trip.tripInfo.notIncluded.map((item, index) => (
+                                <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                  <XCircle className="h-4 w-4 text-seats-full mt-0.5 flex-shrink-0" />
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* Important Note */}
+                        {trip.tripInfo.importantNote && (
+                          <div className="rounded-lg bg-primary/10 border border-primary/20 p-4">
+                            <h4 className="flex items-center gap-2 text-sm font-semibold text-primary mb-2">
+                              <Megaphone className="h-4 w-4" />
+                              Nota importante
+                            </h4>
+                            <p className="text-sm text-card-foreground">
+                              {trip.tripInfo.importantNote}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Additional Information */}
+                        {trip.tripInfo.additionalInfo && (
+                          <div>
+                            <h4 className="flex items-center gap-2 text-sm font-semibold text-card-foreground mb-2">
+                              <Info className="h-4 w-4 text-primary" />
+                              Información adicional
+                            </h4>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {trip.tripInfo.additionalInfo}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Organizer Rules */}
+                        {trip.tripInfo.organizerRules && (
+                          <div className="rounded-lg bg-yellow-500/10 border border-yellow-500/30 p-4">
+                            <h4 className="flex items-center gap-2 text-sm font-semibold text-yellow-700 dark:text-yellow-500 mb-2">
+                              <AlertTriangle className="h-4 w-4" />
+                              Normas del organizador
+                            </h4>
+                            <p className="text-sm text-card-foreground leading-relaxed">
+                              {trip.tripInfo.organizerRules}
+                            </p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </Card>
+              )}
+              
               {/* Driver's Passengers Section (only visible if current user is driver) */}
               {trip.isCurrentUserDriver && (
                 <Card>

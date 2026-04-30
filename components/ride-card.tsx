@@ -151,8 +151,8 @@ export function RideCard({
             </div>
           </div>
 
-          {/* Driver Info & Price */}
-          <div className="flex items-center justify-between gap-4 border-t border-border bg-muted/30 p-5 lg:w-72 lg:flex-col lg:items-stretch lg:justify-center lg:border-l lg:border-t-0">
+          {/* Driver Info & Price Section */}
+          <div className="flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-border bg-muted/30 p-5 lg:w-64">
             {/* Driver */}
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -172,7 +172,7 @@ export function RideCard({
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-card-foreground">{driverName}</span>
                   {isTopDriver && (
-                    <Badge className="bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20 text-xs">
+                    <Badge className="bg-yellow-500/20 text-yellow-600 hover:bg-yellow-500/30 text-xs">
                       TOP
                     </Badge>
                   )}
@@ -185,16 +185,16 @@ export function RideCard({
             </div>
 
             {/* Price & Action */}
-            <div className="flex items-center gap-4 lg:mt-3 lg:flex-col lg:items-stretch">
+            <div className="mt-4 flex items-center justify-between">
               {price !== undefined && (
-                <div className="flex items-center gap-1 text-lg font-bold text-card-foreground lg:justify-center">
+                <div className="flex items-center gap-1 text-lg font-bold text-card-foreground">
                   <Euro className="h-5 w-5 text-primary" />
                   <span>{price}</span>
                   <span className="text-sm font-normal text-muted-foreground">/persona</span>
                 </div>
               )}
               <Button 
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                className="ml-auto bg-primary text-primary-foreground hover:bg-primary/90"
                 disabled={availableSeats === 0}
               >
                 {availableSeats === 0 ? "Completo" : "Reservar"}
@@ -202,7 +202,7 @@ export function RideCard({
             </div>
           </div>
         </div>
-      </CardContent>
+        </CardContent>
       </Card>
     </Link>
   )
