@@ -92,13 +92,13 @@ function getStatusBadge(status: TripStatus) {
   switch (status) {
     case "upcoming":
       return (
-        <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/10">
+        <Badge className="bg-primary text-primary-foreground hover:bg-primary/90">
           Próximo
         </Badge>
       )
     case "ongoing":
       return (
-        <Badge className="bg-seats-available/10 text-seats-available border-seats-available/20 hover:bg-seats-available/10">
+        <Badge className="bg-seats-available text-white hover:bg-seats-available/90">
           En curso
         </Badge>
       )

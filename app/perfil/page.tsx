@@ -43,7 +43,6 @@ import {
   XCircle,
   AlertCircle,
   Timer,
-  ChevronRight,
   Trash2,
   Pencil,
   Users,
@@ -268,6 +267,12 @@ export default function PerfilPage() {
                   <CardTitle className="flex items-center gap-2">
                     <User className="h-5 w-5 text-primary" />
                     Datos personales
+                    {userData.hasTopBadge && (
+                      <div className="flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2 py-0.5" title="Organizador destacado">
+                        <Trophy className="h-4 w-4 text-amber-500" />
+                        <span className="text-xs font-medium text-amber-600">Top</span>
+                      </div>
+                    )}
                   </CardTitle>
                   <CardDescription>Tu información de perfil y contacto</CardDescription>
                 </div>
@@ -397,143 +402,6 @@ export default function PerfilPage() {
             </CardContent>
           </Card>
 
-          {/* Favorite Teams Section */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-primary" />
-                    Equipos favoritos
-                  </CardTitle>
-                  <CardDescription>Los equipos que sigues</CardDescription>
-                </div>
-                <Dialog open={isAddTeamOpen} onOpenChange={setIsAddTeamOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Añadir
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Añadir equipo favorito</DialogTitle>
-                      <DialogDescription>Busca y selecciona un equipo para añadir a tus favoritos</DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Buscar equipo..."
-                          value={teamSearchQuery}
-                          onChange={e => setTeamSearchQuery(e.target.value)}
-                          className="pl-10"
-                        />
-                      </div>
-                      <div className="max-h-64 overflow-y-auto space-y-2">
-                        {filteredTeamsToAdd.length > 0 ? (
-                          filteredTeamsToAdd.map(team => (
-                            <button
-                              key={team.id}
-                              onClick={() => handleAddFavoriteTeam(team)}
-                              className="w-full flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted transition-colors"
-                            >
-                              <Image
-                                src={team.logo}
-                                alt={team.name}
-                                width={32}
-                                height={32}
-                                className="object-contain"
-                              />
-                              <span className="font-medium">{team.name}</span>
-                            </button>
-                          ))
-                        ) : (
-                          <p className="text-center text-muted-foreground py-4">
-                            No se encontraron equipos
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {favoriteTeams.length > 0 ? (
-                <div className="flex flex-wrap gap-3">
-                  {favoriteTeams.map(team => (
-                    <div
-                      key={team.id}
-                      className="flex items-center gap-2 rounded-full border border-border bg-muted/50 py-2 px-4 pr-2"
-                    >
-                      <Image
-                        src={team.logo}
-                        alt={team.name}
-                        width={24}
-                        height={24}
-                        className="object-contain"
-                      />
-                      <span className="text-sm font-medium">{team.name}</span>
-                      <button
-                        onClick={() => handleRemoveFavoriteTeam(team.id)}
-                        className="ml-1 rounded-full p-1 hover:bg-destructive/10 hover:text-destructive transition-colors"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-muted-foreground text-sm">
-                  No tienes equipos favoritos. Añade uno para recibir notificaciones de viajes.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Top Badge Section */}
-          {userData.hasTopBadge && (
-            <Card className="border-amber-500/30 bg-gradient-to-r from-amber-500/5 to-transparent">
-              <CardContent className="py-6">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-full bg-amber-500/10 p-3">
-                    <Trophy className="h-8 w-8 text-amber-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground flex items-center gap-2">
-                      Insignia Top
-                      <Badge className="bg-amber-500/20 text-amber-600 border-amber-500/30 hover:bg-amber-500/20">
-                        Verificado
-                      </Badge>
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Eres un organizador destacado con excelentes valoraciones
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* My Trips as Driver Section */}
-          <Card>
-            <CardContent className="py-6">
-              <Link href="/mis-viajes" className="flex items-center justify-between group">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-full bg-primary/10 p-3">
-                    <Car className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Mis viajes como conductor</h3>
-                    <p className="text-sm text-muted-foreground">Gestiona los viajes que organizas</p>
-                  </div>
-                </div>
-                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-              </Link>
-            </CardContent>
-          </Card>
-
           {/* My Requests Section */}
           <Card>
             <CardHeader>
@@ -611,24 +479,115 @@ export default function PerfilPage() {
             </CardContent>
           </Card>
 
-          {/* My Vehicles Section */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <Car className="h-5 w-5 text-primary" />
-                    Mis vehículos
+          {/* Teams and Vehicles Grid */}
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Favorite Teams Section */}
+            <Card className="h-fit">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Shield className="h-4 w-4 text-primary" />
+                    Equipos favoritos
                   </CardTitle>
-                  <CardDescription>Gestiona los vehículos que usas para tus viajes</CardDescription>
+                  <Dialog open={isAddTeamOpen} onOpenChange={setIsAddTeamOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="h-7 text-xs px-2">
+                        <Plus className="h-3 w-3 mr-1" />
+                        Añadir
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Añadir equipo favorito</DialogTitle>
+                        <DialogDescription>Busca y selecciona un equipo para añadir a tus favoritos</DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Buscar equipo..."
+                            value={teamSearchQuery}
+                            onChange={e => setTeamSearchQuery(e.target.value)}
+                            className="pl-10"
+                          />
+                        </div>
+                        <div className="max-h-64 overflow-y-auto space-y-2">
+                          {filteredTeamsToAdd.length > 0 ? (
+                            filteredTeamsToAdd.map(team => (
+                              <button
+                                key={team.id}
+                                onClick={() => handleAddFavoriteTeam(team)}
+                                className="w-full flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted transition-colors"
+                              >
+                                <Image
+                                  src={team.logo}
+                                  alt={team.name}
+                                  width={32}
+                                  height={32}
+                                  className="object-contain"
+                                />
+                                <span className="font-medium">{team.name}</span>
+                              </button>
+                            ))
+                          ) : (
+                            <p className="text-center text-muted-foreground py-4">
+                              No se encontraron equipos
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
-                <Dialog open={isAddVehicleOpen} onOpenChange={setIsAddVehicleOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Añadir vehículo
-                    </Button>
-                  </DialogTrigger>
+              </CardHeader>
+              <CardContent className="pt-0">
+                {favoriteTeams.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {favoriteTeams.map(team => (
+                      <div
+                        key={team.id}
+                        className="flex items-center gap-1.5 rounded-full border border-border bg-muted/50 py-1.5 px-3 pr-1.5"
+                      >
+                        <Image
+                          src={team.logo}
+                          alt={team.name}
+                          width={20}
+                          height={20}
+                          className="object-contain"
+                        />
+                        <span className="text-xs font-medium">{team.name}</span>
+                        <button
+                          onClick={() => handleRemoveFavoriteTeam(team.id)}
+                          className="ml-0.5 rounded-full p-0.5 hover:bg-destructive/10 hover:text-destructive transition-colors"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-xs">
+                    No tienes equipos favoritos
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* My Vehicles Section */}
+            <Card className="h-fit">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Car className="h-4 w-4 text-primary" />
+                    Mis vehiculos
+                  </CardTitle>
+                  <Dialog open={isAddVehicleOpen} onOpenChange={setIsAddVehicleOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="h-7 text-xs px-2">
+                        <Plus className="h-3 w-3 mr-1" />
+                        Añadir
+                      </Button>
+                    </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Añadir vehículo</DialogTitle>
@@ -718,165 +677,150 @@ export default function PerfilPage() {
                 </Dialog>
               </div>
             </CardHeader>
-            <CardContent>
-              {vehicles.length > 0 ? (
-                <div className="space-y-3">
-                  {vehicles.map(vehicle => (
-                    <div
-                      key={vehicle.id}
-                      className="flex items-center justify-between p-4 rounded-lg border border-border bg-muted/30"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="rounded-full bg-primary/10 p-2.5 text-primary">
-                          {getVehicleIcon(vehicle.type)}
-                        </div>
-                        <div>
-                          <p className="font-medium">
-                            {vehicle.brand} {vehicle.model}
-                          </p>
-                          <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
-                            <span className="flex items-center gap-1">
-                              <Users className="h-3 w-3" />
+              <CardContent className="pt-0">
+                {vehicles.length > 0 ? (
+                  <div className="space-y-2">
+                    {vehicles.map(vehicle => (
+                      <div
+                        key={vehicle.id}
+                        className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-muted/30"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div className="rounded-full bg-primary/10 p-1.5 text-primary">
+                            {getVehicleIcon(vehicle.type)}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">
+                              {vehicle.brand} {vehicle.model}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
                               {vehicle.capacity} plazas
-                            </span>
-                            {vehicle.color && (
-                              <span className="flex items-center gap-1">
-                                <Palette className="h-3 w-3" />
-                                {vehicle.color}
-                              </span>
-                            )}
-                            {vehicle.plate && (
-                              <span>{vehicle.plate}</span>
-                            )}
+                              {vehicle.hasActiveTrip && " · Viaje activo"}
+                            </p>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {vehicle.hasActiveTrip && (
-                          <Badge variant="secondary" className="text-xs">
-                            Viaje activo
-                          </Badge>
-                        )}
-                        <Dialog
-                          open={editingVehicle?.id === vehicle.id}
-                          onOpenChange={open => !open && setEditingVehicle(null)}
-                        >
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                              onClick={() => handleEditVehicle(vehicle)}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Editar vehículo</DialogTitle>
-                              <DialogDescription>Modifica los datos de tu vehículo</DialogDescription>
-                            </DialogHeader>
-                            {editingVehicle && (
-                              <div className="space-y-4">
-                                <div className="space-y-2">
-                                  <Label>Tipo de vehículo</Label>
-                                  <Select
-                                    value={editingVehicle.type}
-                                    onValueChange={value => setEditingVehicle(prev => prev ? { ...prev, type: value } : null)}
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="car">Coche</SelectItem>
-                                      <SelectItem value="minivan">Minivan</SelectItem>
-                                      <SelectItem value="bus">Autobús</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                                <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="flex items-center gap-0.5">
+                          <Dialog
+                            open={editingVehicle?.id === vehicle.id}
+                            onOpenChange={open => !open && setEditingVehicle(null)}
+                          >
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6"
+                                onClick={() => handleEditVehicle(vehicle)}
+                              >
+                                <Pencil className="h-3 w-3" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Editar vehiculo</DialogTitle>
+                                <DialogDescription>Modifica los datos de tu vehiculo</DialogDescription>
+                              </DialogHeader>
+                              {editingVehicle && (
+                                <div className="space-y-4">
                                   <div className="space-y-2">
-                                    <Label htmlFor="edit-brand">Marca *</Label>
-                                    <Input
-                                      id="edit-brand"
-                                      value={editingVehicle.brand}
-                                      onChange={e => setEditingVehicle(prev => prev ? { ...prev, brand: e.target.value } : null)}
-                                    />
+                                    <Label>Tipo de vehiculo</Label>
+                                    <Select
+                                      value={editingVehicle.type}
+                                      onValueChange={value => setEditingVehicle(prev => prev ? { ...prev, type: value } : null)}
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="car">Coche</SelectItem>
+                                        <SelectItem value="minivan">Minivan</SelectItem>
+                                        <SelectItem value="bus">Autobus</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="grid gap-4 sm:grid-cols-2">
+                                    <div className="space-y-2">
+                                      <Label htmlFor="edit-brand">Marca *</Label>
+                                      <Input
+                                        id="edit-brand"
+                                        value={editingVehicle.brand}
+                                        onChange={e => setEditingVehicle(prev => prev ? { ...prev, brand: e.target.value } : null)}
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label htmlFor="edit-model">Modelo *</Label>
+                                      <Input
+                                        id="edit-model"
+                                        value={editingVehicle.model}
+                                        onChange={e => setEditingVehicle(prev => prev ? { ...prev, model: e.target.value } : null)}
+                                      />
+                                    </div>
                                   </div>
                                   <div className="space-y-2">
-                                    <Label htmlFor="edit-model">Modelo *</Label>
+                                    <Label htmlFor="edit-capacity">Capacidad (plazas) *</Label>
                                     <Input
-                                      id="edit-model"
-                                      value={editingVehicle.model}
-                                      onChange={e => setEditingVehicle(prev => prev ? { ...prev, model: e.target.value } : null)}
+                                      id="edit-capacity"
+                                      type="number"
+                                      min={1}
+                                      max={50}
+                                      value={editingVehicle.capacity}
+                                      onChange={e => setEditingVehicle(prev => prev ? { ...prev, capacity: parseInt(e.target.value) || 1 } : null)}
                                     />
                                   </div>
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor="edit-capacity">Capacidad (plazas) *</Label>
-                                  <Input
-                                    id="edit-capacity"
-                                    type="number"
-                                    min={1}
-                                    max={50}
-                                    value={editingVehicle.capacity}
-                                    onChange={e => setEditingVehicle(prev => prev ? { ...prev, capacity: parseInt(e.target.value) || 1 } : null)}
-                                  />
-                                </div>
-                                <div className="grid gap-4 sm:grid-cols-2">
-                                  <div className="space-y-2">
-                                    <Label htmlFor="edit-color">Color (opcional)</Label>
-                                    <Input
-                                      id="edit-color"
-                                      value={editingVehicle.color}
-                                      onChange={e => setEditingVehicle(prev => prev ? { ...prev, color: e.target.value } : null)}
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label htmlFor="edit-plate">Matrícula (opcional)</Label>
-                                    <Input
-                                      id="edit-plate"
-                                      value={editingVehicle.plate}
-                                      onChange={e => setEditingVehicle(prev => prev ? { ...prev, plate: e.target.value } : null)}
-                                    />
+                                  <div className="grid gap-4 sm:grid-cols-2">
+                                    <div className="space-y-2">
+                                      <Label htmlFor="edit-color">Color (opcional)</Label>
+                                      <Input
+                                        id="edit-color"
+                                        value={editingVehicle.color}
+                                        onChange={e => setEditingVehicle(prev => prev ? { ...prev, color: e.target.value } : null)}
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label htmlFor="edit-plate">Matricula (opcional)</Label>
+                                      <Input
+                                        id="edit-plate"
+                                        value={editingVehicle.plate}
+                                        onChange={e => setEditingVehicle(prev => prev ? { ...prev, plate: e.target.value } : null)}
+                                      />
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
+                              )}
+                              <DialogFooter>
+                                <Button variant="outline" onClick={() => setEditingVehicle(null)}>
+                                  Cancelar
+                                </Button>
+                                <Button onClick={handleSaveEditVehicle}>
+                                  Guardar cambios
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className={cn(
+                              "h-6 w-6",
+                              vehicle.hasActiveTrip && "opacity-50 cursor-not-allowed"
                             )}
-                            <DialogFooter>
-                              <Button variant="outline" onClick={() => setEditingVehicle(null)}>
-                                Cancelar
-                              </Button>
-                              <Button onClick={handleSaveEditVehicle}>
-                                Guardar cambios
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className={cn(
-                            "h-8 w-8",
-                            vehicle.hasActiveTrip && "opacity-50 cursor-not-allowed"
-                          )}
-                          disabled={vehicle.hasActiveTrip}
-                          onClick={() => handleDeleteVehicle(vehicle.id)}
-                          title={vehicle.hasActiveTrip ? "No puedes eliminar un vehículo con viaje activo" : "Eliminar vehículo"}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                            disabled={vehicle.hasActiveTrip}
+                            onClick={() => handleDeleteVehicle(vehicle.id)}
+                            title={vehicle.hasActiveTrip ? "No puedes eliminar un vehiculo con viaje activo" : "Eliminar vehiculo"}
+                          >
+                            <Trash2 className="h-3 w-3 text-destructive" />
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-muted-foreground text-sm">
-                  No tienes vehículos registrados. Añade uno para publicar viajes.
-                </p>
-              )}
-            </CardContent>
-          </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-xs">
+                    No tienes vehiculos registrados
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
     </div>
