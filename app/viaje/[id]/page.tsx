@@ -17,12 +17,26 @@ import {
   Phone,
   ArrowLeft,
   Settings,
+  Building2,
+  Route,
+  CircleDot,
+  Flag,
+  Home,
+  CheckCircle2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Header } from "@/components/header"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
@@ -35,6 +49,14 @@ interface Passenger {
   name: string
   avatar?: string
   status: "confirmed" | "pending"
+}
+
+interface ItineraryStep {
+  id: string
+  time: string
+  title: string
+  description: string
+  type: "departure" | "meeting" | "match" | "return" | "arrival"
 }
 
 interface TripDetails {
@@ -66,6 +88,10 @@ interface TripDetails {
   passengers: Passenger[]
   isCurrentUserDriver: boolean
   isCurrentUserPassenger: boolean
+  stadiumName: string
+  stadiumImage: string
+  stadiumCity: string
+  itinerary: ItineraryStep[]
 }
 
 const teamCrests: Record<string, string> = {
@@ -106,6 +132,53 @@ const mockTrip: TripDetails = {
   ],
   isCurrentUserDriver: false,
   isCurrentUserPassenger: true,
+  stadiumName: "Santiago Bernabeu",
+  stadiumImage: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=80",
+  stadiumCity: "Madrid",
+  itinerary: [
+    {
+      id: "1",
+      time: "13:30",
+      title: "Punto de encuentro",
+      description: "Plaza del Ayuntamiento, 1 - Valencia",
+      type: "meeting",
+    },
+    {
+      id: "2",
+      time: "14:00",
+      title: "Salida",
+      description: "Inicio del viaje hacia Madrid",
+      type: "departure",
+    },
+    {
+      id: "3",
+      time: "17:30",
+      title: "Llegada a Madrid",
+      description: "Llegada aproximada al estadio",
+      type: "arrival",
+    },
+    {
+      id: "4",
+      time: "21:00",
+      title: "Partido",
+      description: "Real Madrid vs FC Barcelona - Santiago Bernabeu",
+      type: "match",
+    },
+    {
+      id: "5",
+      time: "23:15",
+      title: "Regreso",
+      description: "Salida desde el estadio hacia Valencia",
+      type: "return",
+    },
+    {
+      id: "6",
+      time: "02:45",
+      title: "Llegada a Valencia",
+      description: "Llegada estimada al punto de encuentro",
+      type: "arrival",
+    },
+  ],
 }
 
 export default function TripDetailPage() {
@@ -176,13 +249,30 @@ export default function TripDetailPage() {
             </Badge>
           </div>
 
-          {/* Match Info Card */}
-          <Card className="mb-6">
-            <CardContent className="p-6">
-              <Badge variant="secondary" className="mb-4 text-xs font-medium">
+          {/* Match Info Card with Stadium Image */}
+          <Card className="mb-6 overflow-hidden">
+            {/* Stadium Image Header */}
+            <div className="relative h-48 w-full">
+              <Image
+                src={trip.stadiumImage}
+                alt={trip.stadiumName}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4">
+                <div className="flex items-center gap-2 text-white">
+                  <Building2 className="h-5 w-5" />
+                  <span className="text-lg font-semibold">{trip.stadiumName}</span>
+                </div>
+                <p className="text-sm text-white/80 mt-1">{trip.stadiumCity}</p>
+              </div>
+              <Badge variant="secondary" className="absolute top-4 left-4 text-xs font-medium">
                 {trip.competition}
               </Badge>
-
+            </div>
+            
+            <CardContent className="p-6">
               {/* Teams */}
               <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-8">
                 {/* Home Team */}
@@ -235,10 +325,101 @@ export default function TripDetailPage() {
           <div className="grid gap-6 lg:grid-cols-3">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Departure Info */}
+              {/* Departure Info with Itinerary Button */}
               <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle className="text-lg">Información de salida</CardTitle>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <Route className="h-4 w-4" />
+                        Ver itinerario
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-lg">
+                      <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                          <Route className="h-5 w-5 text-primary" />
+                          Itinerario del viaje
+                        </DialogTitle>
+                        <DialogDescription>
+                          Cronograma detallado del viaje a {trip.stadiumName}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="mt-4">
+                        {/* Timeline */}
+                        <div className="relative space-y-0">
+                          {trip.itinerary.map((step, index) => {
+                            const getStepIcon = (type: ItineraryStep["type"]) => {
+                              switch (type) {
+                                case "meeting":
+                                  return <Users className="h-4 w-4" />
+                                case "departure":
+                                  return <Car className="h-4 w-4" />
+                                case "match":
+                                  return <Trophy className="h-4 w-4" />
+                                case "return":
+                                  return <ArrowLeft className="h-4 w-4" />
+                                case "arrival":
+                                  return <Flag className="h-4 w-4" />
+                                default:
+                                  return <CircleDot className="h-4 w-4" />
+                              }
+                            }
+
+                            const getStepColor = (type: ItineraryStep["type"]) => {
+                              switch (type) {
+                                case "match":
+                                  return "bg-primary text-primary-foreground"
+                                case "departure":
+                                case "return":
+                                  return "bg-seats-available text-white"
+                                case "arrival":
+                                  return "bg-seats-low text-foreground"
+                                default:
+                                  return "bg-secondary text-secondary-foreground"
+                              }
+                            }
+
+                            const isLast = index === trip.itinerary.length - 1
+
+                            return (
+                              <div key={step.id} className="flex gap-4">
+                                {/* Timeline line and dot */}
+                                <div className="flex flex-col items-center">
+                                  <div
+                                    className={cn(
+                                      "flex h-10 w-10 items-center justify-center rounded-full",
+                                      getStepColor(step.type)
+                                    )}
+                                  >
+                                    {getStepIcon(step.type)}
+                                  </div>
+                                  {!isLast && (
+                                    <div className="h-12 w-0.5 bg-border" />
+                                  )}
+                                </div>
+                                {/* Content */}
+                                <div className="flex-1 pb-8">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm font-bold text-primary">
+                                      {step.time}
+                                    </span>
+                                    <span className="font-semibold text-card-foreground">
+                                      {step.title}
+                                    </span>
+                                  </div>
+                                  <p className="mt-1 text-sm text-muted-foreground">
+                                    {step.description}
+                                  </p>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-start gap-3">
@@ -257,6 +438,41 @@ export default function TripDetailPage() {
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-primary" />
                       <span className="text-sm">{trip.departureTime}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Quick Itinerary Preview */}
+                  <Separator />
+                  <div className="rounded-lg bg-secondary/50 p-4">
+                    <h4 className="flex items-center gap-2 text-sm font-medium text-card-foreground mb-3">
+                      <Route className="h-4 w-4 text-primary" />
+                      Resumen del viaje
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Car className="h-4 w-4 text-seats-available" />
+                        <span className="text-muted-foreground">Salida:</span>
+                        <span className="font-medium">{trip.departureTime}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Trophy className="h-4 w-4 text-primary" />
+                        <span className="text-muted-foreground">Partido:</span>
+                        <span className="font-medium">{trip.matchTime}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <ArrowLeft className="h-4 w-4 text-seats-available" />
+                        <span className="text-muted-foreground">Regreso:</span>
+                        <span className="font-medium">
+                          {trip.itinerary.find(s => s.type === "return")?.time || "Por confirmar"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Home className="h-4 w-4 text-seats-low" />
+                        <span className="text-muted-foreground">Llegada:</span>
+                        <span className="font-medium">
+                          {trip.itinerary[trip.itinerary.length - 1]?.time || "Por confirmar"}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
