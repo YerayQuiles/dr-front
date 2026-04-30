@@ -14,6 +14,7 @@ import {
   Car,
   Bus,
   Bookmark,
+  BookmarkCheck,
   Phone,
   ArrowLeft,
   Settings,
@@ -33,6 +34,8 @@ import {
   Coffee,
   Fuel,
   Navigation,
+  Send,
+  X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -46,8 +49,22 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
+  DialogClose,
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import {
   Collapsible,
   CollapsibleContent,
@@ -116,18 +133,20 @@ interface TripDetails {
   availableSeats: number
   totalSeats: number
   price?: number
-  driverName: string
-  driverRating: number
-  driverAvatar?: string
-  driverPhone?: string
-  isTopDriver?: boolean
+  organizerId: string
+  organizerName: string
+  organizerRating: number
+  organizerAvatar?: string
+  organizerPhone?: string
+  organizerType: "person" | "organization"
+  isTopOrganizer?: boolean
   vehicleType: VehicleType
   vehicleBrand: string
   vehicleModel: string
   vehicleColor: string
   status: TripStatus
   passengers: Passenger[]
-  isCurrentUserDriver: boolean
+  isCurrentUserOrganizer: boolean
   isCurrentUserPassenger: boolean
   stadiumName: string
   stadiumImage: string
@@ -160,11 +179,13 @@ const mockTrip: TripDetails = {
   availableSeats: 2,
   totalSeats: 4,
   price: 25,
-  driverName: "Carlos García",
-  driverRating: 4.9,
-  driverAvatar: undefined,
-  driverPhone: "+34 612 345 678",
-  isTopDriver: true,
+  organizerId: "org-1",
+  organizerName: "Carlos García",
+  organizerRating: 4.9,
+  organizerAvatar: undefined,
+  organizerPhone: "+34 612 345 678",
+  organizerType: "person",
+  isTopOrganizer: true,
   vehicleType: "car",
   vehicleBrand: "Volkswagen",
   vehicleModel: "Golf",
@@ -174,8 +195,8 @@ const mockTrip: TripDetails = {
     { id: "p1", name: "María López", avatar: undefined, status: "confirmed" },
     { id: "p2", name: "Juan Pérez", avatar: undefined, status: "pending" },
   ],
-  isCurrentUserDriver: false,
-  isCurrentUserPassenger: true,
+  isCurrentUserOrganizer: false,
+  isCurrentUserPassenger: false,
   stadiumName: "Santiago Bernabeu",
   stadiumImage: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=80",
   stadiumCity: "Madrid",
@@ -288,8 +309,12 @@ const mockTrip: TripDetails = {
 export default function TripDetailPage() {
   const params = useParams()
   const [isSaved, setIsSaved] = useState(false)
+  const [hasRequested, setHasRequested] = useState(false)
   const [isRequesting, setIsRequesting] = useState(false)
+  const [isCancelling, setIsCancelling] = useState(false)
   const [expandedMaps, setExpandedMaps] = useState<Record<string, boolean>>({})
+  const [showRequestModal, setShowRequestModal] = useState(false)
+  const [showSaveModal, setShowSaveModal] = useState(false)
 
   const toggleMap = (stepId: string) => {
     setExpandedMaps(prev => ({
@@ -331,14 +356,33 @@ export default function TripDetailPage() {
   const VehicleIcon = vehicleInfo.icon
   const statusBadge = getStatusBadge(trip.status)
 
-  const handleRequestSeat = async () => {
+  const handleConfirmRequest = async () => {
     setIsRequesting(true)
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
+    setHasRequested(true)
     setIsRequesting(false)
+    setShowRequestModal(false)
   }
 
-  const canSeePhone = trip.isCurrentUserDriver || trip.isCurrentUserPassenger
+  const handleCancelRequest = async () => {
+    setIsCancelling(true)
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    setHasRequested(false)
+    setIsCancelling(false)
+  }
+
+  const handleConfirmSave = () => {
+    setIsSaved(true)
+    setShowSaveModal(false)
+  }
+
+  const handleUnsave = () => {
+    setIsSaved(false)
+  }
+
+  const canSeePhone = trip.isCurrentUserOrganizer || trip.isCurrentUserPassenger
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -780,7 +824,7 @@ export default function TripDetailPage() {
               )}
               
               {/* Driver's Passengers Section (only visible if current user is driver) */}
-              {trip.isCurrentUserDriver && (
+              {trip.isCurrentUserOrganizer && (
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-lg">Pasajeros confirmados</CardTitle>
@@ -824,21 +868,24 @@ export default function TripDetailPage() {
 
             {/* Sidebar */}
             <div className="space-y-6">
-              {/* Driver Info */}
+              {/* Organizer Info */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Conductor</CardTitle>
+                  <CardTitle className="text-lg">Organizador</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-3">
+                  <Link 
+                    href={`/organizador/${trip.organizerId}`}
+                    className="flex items-center gap-3 group"
+                  >
                     <div className="relative">
-                      <Avatar className="h-14 w-14 border-2 border-card">
-                        <AvatarImage src={trip.driverAvatar} alt={trip.driverName} />
+                      <Avatar className="h-14 w-14 border-2 border-card transition-transform group-hover:scale-105">
+                        <AvatarImage src={trip.organizerAvatar} alt={trip.organizerName} />
                         <AvatarFallback className="bg-primary/10 text-primary text-lg">
-                          {trip.driverName.split(" ").map((n) => n[0]).join("")}
+                          {trip.organizerName.split(" ").map((n) => n[0]).join("")}
                         </AvatarFallback>
                       </Avatar>
-                      {trip.isTopDriver && (
+                      {trip.isTopOrganizer && (
                         <div className="absolute -right-1 -top-1 rounded-full bg-yellow-500 p-1">
                           <Trophy className="h-3 w-3 text-white" />
                         </div>
@@ -846,25 +893,33 @@ export default function TripDetailPage() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-card-foreground">{trip.driverName}</span>
-                        {trip.isTopDriver && (
+                        <span className="font-semibold text-card-foreground group-hover:text-primary transition-colors">
+                          {trip.organizerName}
+                        </span>
+                        {trip.isTopOrganizer && (
                           <Badge className="bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20 text-xs">
                             TOP
                           </Badge>
                         )}
                       </div>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                        <span>{trip.driverRating.toFixed(1)}</span>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                          <span>{trip.organizerRating.toFixed(1)}</span>
+                        </div>
+                        <span className="text-muted-foreground/50">-</span>
+                        <span className="text-xs">
+                          {trip.organizerType === "organization" ? "Organización" : "Persona"}
+                        </span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
 
-                  {/* Phone number - only visible to driver or accepted passenger */}
-                  {canSeePhone && trip.driverPhone && (
+                  {/* Phone number - only visible to organizer or accepted passenger */}
+                  {canSeePhone && trip.organizerPhone && (
                     <div className="mt-4 flex items-center gap-2 rounded-lg bg-secondary p-3">
                       <Phone className="h-4 w-4 text-primary" />
-                      <span className="text-sm font-medium">{trip.driverPhone}</span>
+                      <span className="text-sm font-medium">{trip.organizerPhone}</span>
                     </div>
                   )}
                 </CardContent>
@@ -902,29 +957,125 @@ export default function TripDetailPage() {
 
                   {/* Actions */}
                   <div className="space-y-3">
-                    <Button
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                      disabled={trip.availableSeats === 0 || trip.status !== "active" || isRequesting}
-                      onClick={handleRequestSeat}
-                    >
-                      {isRequesting
-                        ? "Solicitando..."
-                        : trip.availableSeats === 0
-                        ? "Completo"
-                        : trip.status !== "active"
-                        ? "No disponible"
-                        : "Solicitar plaza"}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full gap-2"
-                      onClick={() => setIsSaved(!isSaved)}
-                    >
-                      <Bookmark
-                        className={cn("h-4 w-4", isSaved && "fill-primary text-primary")}
-                      />
-                      {isSaved ? "Guardado" : "Guardar viaje"}
-                    </Button>
+                    {/* Request Seat Button with Modal */}
+                    {!hasRequested ? (
+                      <AlertDialog open={showRequestModal} onOpenChange={setShowRequestModal}>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 gap-2"
+                            disabled={trip.availableSeats === 0 || trip.status !== "active"}
+                          >
+                            <Send className="h-4 w-4" />
+                            {trip.availableSeats === 0
+                              ? "Completo"
+                              : trip.status !== "active"
+                              ? "No disponible"
+                              : "Solicitar plaza"}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Confirmar solicitud</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              ¿Confirmas que quieres solicitar plaza en este viaje?
+                              <span className="block mt-2 text-card-foreground font-medium">
+                                {trip.homeTeam} vs {trip.awayTeam} - {trip.matchDate}
+                              </span>
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={handleConfirmRequest}
+                              disabled={isRequesting}
+                              className="gap-2"
+                            >
+                              {isRequesting ? (
+                                "Enviando..."
+                              ) : (
+                                <>
+                                  <CheckCircle2 className="h-4 w-4" />
+                                  Confirmar solicitud
+                                </>
+                              )}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    ) : (
+                      <div className="space-y-2">
+                        <Button
+                          className="w-full bg-seats-available text-white hover:bg-seats-available/90 gap-2 cursor-default"
+                          disabled
+                        >
+                          <CheckCircle2 className="h-4 w-4" />
+                          Solicitud enviada
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full text-destructive hover:text-destructive hover:bg-destructive/10 gap-2"
+                          onClick={handleCancelRequest}
+                          disabled={isCancelling}
+                        >
+                          <X className="h-4 w-4" />
+                          {isCancelling ? "Cancelando..." : "Cancelar solicitud"}
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Save Trip Button with Modal */}
+                    {!isSaved ? (
+                      <AlertDialog open={showSaveModal} onOpenChange={setShowSaveModal}>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="w-full gap-2"
+                          >
+                            <Bookmark className="h-4 w-4" />
+                            Guardar viaje
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Guardar viaje</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              ¿Quieres guardar este viaje en tu lista de favoritos?
+                              <span className="block mt-2 text-card-foreground font-medium">
+                                {trip.homeTeam} vs {trip.awayTeam} - {trip.matchDate}
+                              </span>
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleConfirmSave} className="gap-2">
+                              <BookmarkCheck className="h-4 w-4" />
+                              Guardar viaje
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    ) : (
+                      <div className="space-y-2">
+                        <Button
+                          variant="outline"
+                          className="w-full gap-2 border-primary text-primary cursor-default"
+                          disabled
+                        >
+                          <BookmarkCheck className="h-4 w-4 fill-primary" />
+                          Viaje guardado
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full text-muted-foreground hover:text-destructive gap-2"
+                          onClick={handleUnsave}
+                        >
+                          <X className="h-4 w-4" />
+                          Eliminar de guardados
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -932,6 +1083,7 @@ export default function TripDetailPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

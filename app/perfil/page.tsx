@@ -4,6 +4,7 @@ import { useState, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -165,16 +166,7 @@ export default function PerfilPage() {
 
   // Vehicles state
   const [vehicles, setVehicles] = useState(mockVehicles)
-  const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false)
   const [editingVehicle, setEditingVehicle] = useState<typeof mockVehicles[0] | null>(null)
-  const [newVehicle, setNewVehicle] = useState({
-    type: "car",
-    brand: "",
-    model: "",
-    capacity: 4,
-    color: "",
-    plate: "",
-  })
 
   // Saved trips state
   const [savedTrips, setSavedTrips] = useState(mockSavedTrips)
@@ -214,17 +206,6 @@ export default function PerfilPage() {
     setSavedTrips(prev => prev.filter(t => t.id !== tripId))
   }
 
-  const handleAddVehicle = () => {
-    const vehicle = {
-      id: Date.now().toString(),
-      ...newVehicle,
-      hasActiveTrip: false,
-    }
-    setVehicles(prev => [...prev, vehicle])
-    setNewVehicle({ type: "car", brand: "", model: "", capacity: 4, color: "", plate: "" })
-    setIsAddVehicleOpen(false)
-  }
-
   const handleEditVehicle = (vehicle: typeof mockVehicles[0]) => {
     setEditingVehicle(vehicle)
   }
@@ -247,9 +228,9 @@ export default function PerfilPage() {
   )
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="mx-auto max-w-4xl px-4 py-8 lg:px-8">
+      <main className="flex-1 mx-auto w-full max-w-4xl px-4 py-8 lg:px-8">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground">Mi perfil</h1>
@@ -581,100 +562,12 @@ export default function PerfilPage() {
                     <Car className="h-4 w-4 text-primary" />
                     Mis vehiculos
                   </CardTitle>
-                  <Dialog open={isAddVehicleOpen} onOpenChange={setIsAddVehicleOpen}>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-7 text-xs px-2">
-                        <Plus className="h-3 w-3 mr-1" />
-                        Añadir
-                      </Button>
-                    </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Añadir vehículo</DialogTitle>
-                      <DialogDescription>Introduce los datos de tu vehículo</DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label>Tipo de vehículo</Label>
-                        <Select
-                          value={newVehicle.type}
-                          onValueChange={value => setNewVehicle(prev => ({ ...prev, type: value }))}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="car">Coche</SelectItem>
-                            <SelectItem value="minivan">Minivan</SelectItem>
-                            <SelectItem value="bus">Autobús</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="space-y-2">
-                          <Label htmlFor="brand">Marca *</Label>
-                          <Input
-                            id="brand"
-                            value={newVehicle.brand}
-                            onChange={e => setNewVehicle(prev => ({ ...prev, brand: e.target.value }))}
-                            placeholder="Volkswagen"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="model">Modelo *</Label>
-                          <Input
-                            id="model"
-                            value={newVehicle.model}
-                            onChange={e => setNewVehicle(prev => ({ ...prev, model: e.target.value }))}
-                            placeholder="Golf"
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="capacity">Capacidad (plazas) *</Label>
-                        <Input
-                          id="capacity"
-                          type="number"
-                          min={1}
-                          max={50}
-                          value={newVehicle.capacity}
-                          onChange={e => setNewVehicle(prev => ({ ...prev, capacity: parseInt(e.target.value) || 1 }))}
-                        />
-                      </div>
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="space-y-2">
-                          <Label htmlFor="color">Color (opcional)</Label>
-                          <Input
-                            id="color"
-                            value={newVehicle.color}
-                            onChange={e => setNewVehicle(prev => ({ ...prev, color: e.target.value }))}
-                            placeholder="Gris"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="plate">Matrícula (opcional)</Label>
-                          <Input
-                            id="plate"
-                            value={newVehicle.plate}
-                            onChange={e => setNewVehicle(prev => ({ ...prev, plate: e.target.value }))}
-                            placeholder="1234 ABC"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setIsAddVehicleOpen(false)}>
-                        Cancelar
-                      </Button>
-                      <Button
-                        onClick={handleAddVehicle}
-                        disabled={!newVehicle.brand || !newVehicle.model}
-                      >
-                        Añadir vehículo
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                  <Link href="/perfil/vehiculo/nuevo">
+                    <Button variant="outline" size="sm" className="h-7 text-xs px-2">
+                      <Plus className="h-3 w-3 mr-1" />
+                      Añadir
+                    </Button>
+                  </Link>
               </div>
             </CardHeader>
               <CardContent className="pt-0">
@@ -823,6 +716,7 @@ export default function PerfilPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }
