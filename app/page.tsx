@@ -10,7 +10,7 @@ export default function HomePage() {
       <Header />
       <main className="flex-1">
         <Hero />
-        <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+        <div id="viajes" className="mx-auto max-w-7xl px-4 py-8 lg:px-8 scroll-mt-4">
           <RideFilters />
           <RidesList />
         </div>

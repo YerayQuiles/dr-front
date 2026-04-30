@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import Image from "next/image"
 
 const allTeams = [
@@ -185,6 +186,7 @@ export default function OnboardingPage() {
           </Button>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

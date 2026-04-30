@@ -746,8 +746,7 @@ export default function TripDetailPage() {
                         {/* Includes */}
                         {trip.tripInfo.includes && trip.tripInfo.includes.length > 0 && (
                           <div>
-                            <h4 className="flex items-center gap-2 text-sm font-semibold text-card-foreground mb-2">
-                              <CheckCircle2 className="h-4 w-4 text-seats-available" />
+                            <h4 className="text-sm font-semibold text-card-foreground mb-2">
                               Incluye
                             </h4>
                             <ul className="space-y-1.5">
@@ -764,8 +763,7 @@ export default function TripDetailPage() {
                         {/* Not Included */}
                         {trip.tripInfo.notIncluded && trip.tripInfo.notIncluded.length > 0 && (
                           <div>
-                            <h4 className="flex items-center gap-2 text-sm font-semibold text-card-foreground mb-2">
-                              <XCircle className="h-4 w-4 text-seats-full" />
+                            <h4 className="text-sm font-semibold text-card-foreground mb-2">
                               No incluye
                             </h4>
                             <ul className="space-y-1.5">

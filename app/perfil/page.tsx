@@ -380,6 +380,95 @@ export default function PerfilPage() {
                   )}
                 </div>
               </div>
+
+              {/* Favorite Teams - Integrated in Personal Data */}
+              <Separator className="my-4" />
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium">Equipos favoritos</span>
+                  </div>
+                  <Dialog open={isAddTeamOpen} onOpenChange={setIsAddTeamOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="h-7 text-xs px-2">
+                        <Plus className="h-3 w-3 mr-1" />
+                        Añadir
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Añadir equipo favorito</DialogTitle>
+                        <DialogDescription>Busca y selecciona un equipo para añadir a tus favoritos</DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Buscar equipo..."
+                            value={teamSearchQuery}
+                            onChange={e => setTeamSearchQuery(e.target.value)}
+                            className="pl-10"
+                          />
+                        </div>
+                        <div className="max-h-64 overflow-y-auto space-y-2">
+                          {filteredTeamsToAdd.length > 0 ? (
+                            filteredTeamsToAdd.map(team => (
+                              <button
+                                key={team.id}
+                                onClick={() => handleAddFavoriteTeam(team)}
+                                className="w-full flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted transition-colors"
+                              >
+                                <Image
+                                  src={team.logo}
+                                  alt={team.name}
+                                  width={32}
+                                  height={32}
+                                  className="object-contain"
+                                />
+                                <span className="font-medium">{team.name}</span>
+                              </button>
+                            ))
+                          ) : (
+                            <p className="text-center text-muted-foreground py-4">
+                              No se encontraron equipos
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+                {favoriteTeams.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {favoriteTeams.map(team => (
+                      <div
+                        key={team.id}
+                        className="flex items-center gap-1.5 rounded-full border border-border bg-muted/50 py-1.5 px-3 pr-1.5"
+                      >
+                        <Image
+                          src={team.logo}
+                          alt={team.name}
+                          width={20}
+                          height={20}
+                          className="object-contain"
+                        />
+                        <span className="text-xs font-medium">{team.name}</span>
+                        <button
+                          onClick={() => handleRemoveFavoriteTeam(team.id)}
+                          className="ml-0.5 rounded-full p-0.5 hover:bg-destructive/10 hover:text-destructive transition-colors"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-xs">
+                    No tienes equipos favoritos
+                  </p>
+                )}
+              </div>
             </CardContent>
           </Card>
 
@@ -460,102 +549,8 @@ export default function PerfilPage() {
             </CardContent>
           </Card>
 
-          {/* Teams and Vehicles Grid */}
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Favorite Teams Section */}
-            <Card className="h-fit">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <Shield className="h-4 w-4 text-primary" />
-                    Equipos favoritos
-                  </CardTitle>
-                  <Dialog open={isAddTeamOpen} onOpenChange={setIsAddTeamOpen}>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-7 text-xs px-2">
-                        <Plus className="h-3 w-3 mr-1" />
-                        Añadir
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Añadir equipo favorito</DialogTitle>
-                        <DialogDescription>Busca y selecciona un equipo para añadir a tus favoritos</DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            placeholder="Buscar equipo..."
-                            value={teamSearchQuery}
-                            onChange={e => setTeamSearchQuery(e.target.value)}
-                            className="pl-10"
-                          />
-                        </div>
-                        <div className="max-h-64 overflow-y-auto space-y-2">
-                          {filteredTeamsToAdd.length > 0 ? (
-                            filteredTeamsToAdd.map(team => (
-                              <button
-                                key={team.id}
-                                onClick={() => handleAddFavoriteTeam(team)}
-                                className="w-full flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted transition-colors"
-                              >
-                                <Image
-                                  src={team.logo}
-                                  alt={team.name}
-                                  width={32}
-                                  height={32}
-                                  className="object-contain"
-                                />
-                                <span className="font-medium">{team.name}</span>
-                              </button>
-                            ))
-                          ) : (
-                            <p className="text-center text-muted-foreground py-4">
-                              No se encontraron equipos
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                {favoriteTeams.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {favoriteTeams.map(team => (
-                      <div
-                        key={team.id}
-                        className="flex items-center gap-1.5 rounded-full border border-border bg-muted/50 py-1.5 px-3 pr-1.5"
-                      >
-                        <Image
-                          src={team.logo}
-                          alt={team.name}
-                          width={20}
-                          height={20}
-                          className="object-contain"
-                        />
-                        <span className="text-xs font-medium">{team.name}</span>
-                        <button
-                          onClick={() => handleRemoveFavoriteTeam(team.id)}
-                          className="ml-0.5 rounded-full p-0.5 hover:bg-destructive/10 hover:text-destructive transition-colors"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground text-xs">
-                    No tienes equipos favoritos
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* My Vehicles Section */}
-            <Card className="h-fit">
+          {/* My Vehicles Section */}
+          <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2 text-base">
@@ -713,7 +708,6 @@ export default function PerfilPage() {
                 )}
               </CardContent>
             </Card>
-          </div>
         </div>
       </main>
       <Footer />

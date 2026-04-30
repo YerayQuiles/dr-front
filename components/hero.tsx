@@ -1,7 +1,17 @@
+"use client"
+
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Search, PlusCircle, MapPin, Users, Calendar } from "lucide-react"
 
 export function Hero() {
+  const scrollToTrips = () => {
+    const tripsSection = document.getElementById("viajes")
+    if (tripsSection) {
+      tripsSection.scrollIntoView({ behavior: "smooth" })
+    }
+  }
+
   return (
     <section className="relative overflow-hidden bg-header-bg py-20 lg:py-32">
       {/* Background Pattern */}
@@ -23,18 +33,24 @@ export function Hero() {
           </p>
           
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button size="lg" className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
+            <Button 
+              size="lg" 
+              className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto"
+              onClick={scrollToTrips}
+            >
               <Search className="h-5 w-5" />
               Buscar Viaje
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="w-full gap-2 border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white sm:w-auto"
-            >
-              <PlusCircle className="h-5 w-5" />
-              Publicar Viaje
-            </Button>
+            <Link href="/publicar">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="w-full gap-2 border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white sm:w-auto"
+              >
+                <PlusCircle className="h-5 w-5" />
+                Publicar Viaje
+              </Button>
+            </Link>
           </div>
 
           {/* Stats */}

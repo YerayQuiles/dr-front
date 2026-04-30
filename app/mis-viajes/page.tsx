@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -386,9 +387,9 @@ export default function MisViajesPage() {
   const tripCounts = tripRole === "passenger" ? passengerTripCounts : driverTripCounts
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+      <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-8 lg:px-8">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
@@ -527,6 +528,7 @@ export default function MisViajesPage() {
           </>
         )}
       </main>
+      <Footer />
     </div>
   )
 }

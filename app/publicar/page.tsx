@@ -53,6 +53,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { cn } from "@/lib/utils"
 
 type VehicleType = "car" | "van" | "minibus" | "bus"
@@ -1447,6 +1448,7 @@ export default function PublicarViajePage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }

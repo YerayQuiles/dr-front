@@ -73,6 +73,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { cn } from "@/lib/utils"
 
 type TripStatus = "active" | "full" | "cancelled" | "completed"
@@ -412,9 +413,9 @@ export default function DriverPanelPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="mx-auto max-w-4xl px-4 py-8 lg:px-8">
+      <main className="flex-1 mx-auto w-full max-w-4xl px-4 py-8 lg:px-8">
         {/* Back Button */}
         <Link href="/mis-viajes" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
@@ -1095,6 +1096,7 @@ export default function DriverPanelPage() {
           </CardContent>
         </Card>
       </main>
+      <Footer />
     </div>
   )
 }
